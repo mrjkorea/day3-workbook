@@ -1,0 +1,55 @@
+{
+  "unit_id": "ba_u01",
+  "title_en": "Numbers 1 to 10",
+  "title_ko": "1부터 10까지 숫자",
+  "scene": "park",
+  "words": [
+    { "id": "w01", "en": "one", "ko": "일", "audio": "audio/ba_u01/one.mp3" },
+    { "id": "w02", "en": "two", "ko": "이", "audio": "audio/ba_u01/two.mp3" },
+    { "id": "w03", "en": "three", "ko": "삼", "audio": "audio/ba_u01/three.mp3" },
+    { "id": "w04", "en": "four", "ko": "사", "audio": "audio/ba_u01/four.mp3" },
+    { "id": "w05", "en": "five", "ko": "오", "audio": "audio/ba_u01/five.mp3" },
+    { "id": "w06", "en": "six", "ko": "육", "audio": "audio/ba_u01/six.mp3" },
+    { "id": "w07", "en": "seven", "ko": "칠", "audio": "audio/ba_u01/seven.mp3" },
+    { "id": "w08", "en": "eight", "ko": "팔", "audio": "audio/ba_u01/eight.mp3" },
+    { "id": "w09", "en": "nine", "ko": "구", "audio": "audio/ba_u01/nine.mp3" },
+    { "id": "w10", "en": "ten", "ko": "십", "audio": "audio/ba_u01/ten.mp3" }
+  ],
+  "sentences": [
+    {
+      "id": "s01",
+      "en": "I have one mother.",
+      "ko": "나는 엄마가 한 명 있다.",
+      "audio": "audio/ba_u01/s01.mp3",
+      "chips": ["I", "have", "one", "mother"]
+    },
+    {
+      "id": "s02",
+      "en": "I have five brothers.",
+      "ko": "나는 형제가 다섯 명 있다.",
+      "audio": "audio/ba_u01/s02.mp3",
+      "chips": ["I", "have", "five", "brothers"]
+    },
+    {
+      "id": "s03",
+      "en": "I have six sisters.",
+      "ko": "나는 자매가 여섯 명 있다.",
+      "audio": "audio/ba_u01/s03.mp3",
+      "chips": ["I", "have", "six", "sisters"]
+    },
+    {
+      "id": "s04",
+      "en": "I can count to ten.",
+      "ko": "나는 열까지 셀 수 있다.",
+      "audio": "audio/ba_u01/s04.mp3",
+      "chips": ["I", "can", "count", "to", "ten"]
+    },
+    {
+      "id": "s05",
+      "en": "One two three four five.",
+      "ko": "하나 둘 셋 넷 다섯.",
+      "audio": "audio/ba_u01/s05.mp3",
+      "chips": ["One", "two", "three", "four", "five"]
+    }
+  ]
+}

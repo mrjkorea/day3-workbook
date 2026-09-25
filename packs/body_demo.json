@@ -1,0 +1,55 @@
+{
+  "unit_id": "body_demo",
+  "title_en": "My Body",
+  "title_ko": "내 몸",
+  "scene": "body",
+  "words": [
+    { "id": "b01", "en": "head", "ko": "머리", "audio": "audio/body/head.mp3" },
+    { "id": "b02", "en": "eye", "ko": "눈", "audio": "audio/body/eye.mp3" },
+    { "id": "b03", "en": "ear", "ko": "귀", "audio": "audio/body/ear.mp3" },
+    { "id": "b04", "en": "nose", "ko": "코", "audio": "audio/body/nose.mp3" },
+    { "id": "b05", "en": "mouth", "ko": "입", "audio": "audio/body/mouth.mp3" },
+    { "id": "b06", "en": "shoulder", "ko": "어깨", "audio": "audio/body/shoulder.mp3" },
+    { "id": "b07", "en": "arm", "ko": "팔", "audio": "audio/body/arm.mp3" },
+    { "id": "b08", "en": "hand", "ko": "손", "audio": "audio/body/hand.mp3" },
+    { "id": "b09", "en": "leg", "ko": "다리", "audio": "audio/body/leg.mp3" },
+    { "id": "b10", "en": "foot", "ko": "발", "audio": "audio/body/foot.mp3" }
+  ],
+  "sentences": [
+    {
+      "id": "bs01",
+      "en": "This is my head.",
+      "ko": "이것은 내 머리야.",
+      "audio": "audio/body/bs01.mp3",
+      "chips": ["This", "is", "my", "head"]
+    },
+    {
+      "id": "bs02",
+      "en": "I have two eyes.",
+      "ko": "나는 눈이 두 개 있어.",
+      "audio": "audio/body/bs02.mp3",
+      "chips": ["I", "have", "two", "eyes"]
+    },
+    {
+      "id": "bs03",
+      "en": "Touch your nose.",
+      "ko": "코를 만져 봐.",
+      "audio": "audio/body/bs03.mp3",
+      "chips": ["Touch", "your", "nose"]
+    },
+    {
+      "id": "bs04",
+      "en": "Raise your hand.",
+      "ko": "손을 들어.",
+      "audio": "audio/body/bs04.mp3",
+      "chips": ["Raise", "your", "hand"]
+    },
+    {
+      "id": "bs05",
+      "en": "This is my foot.",
+      "ko": "이것은 내 발이야.",
+      "audio": "audio/body/bs05.mp3",
+      "chips": ["This", "is", "my", "foot"]
+    }
+  ]
+}
