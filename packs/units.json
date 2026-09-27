@@ -1,0 +1,506 @@
+[
+  {
+    "id": "basic_a_u1",
+    "title": "Basic A · Unit 1 · Numbers 1 to 10",
+    "book": "basic_a",
+    "unit": 1,
+    "pack_url": "https://mrjkorea.github.io/day2-words/packs/basic_a_u1.json"
+  },
+  {
+    "id": "basic_a_u2",
+    "title": "Basic A · Unit 2 · Hello",
+    "book": "basic_a",
+    "unit": 2,
+    "pack_url": "https://mrjkorea.github.io/day2-words/packs/basic_a_u2.json"
+  },
+  {
+    "id": "basic_a_u3",
+    "title": "Basic A · Unit 3 · Computer Orders",
+    "book": "basic_a",
+    "unit": 3,
+    "pack_url": "https://mrjkorea.github.io/day2-words/packs/basic_a_u3.json"
+  },
+  {
+    "id": "basic_a_u4",
+    "title": "Basic A · Unit 4 · Classroom English One",
+    "book": "basic_a",
+    "unit": 4,
+    "pack_url": "https://mrjkorea.github.io/day2-words/packs/basic_a_u4.json"
+  },
+  {
+    "id": "basic_a_u5",
+    "title": "Basic A · Unit 5 · Family",
+    "book": "basic_a",
+    "unit": 5,
+    "pack_url": "https://mrjkorea.github.io/day2-words/packs/basic_a_u5.json"
+  },
+  {
+    "id": "basic_a_u6",
+    "title": "Basic A · Unit 6 · What is this?",
+    "book": "basic_a",
+    "unit": 6,
+    "pack_url": "https://mrjkorea.github.io/day2-words/packs/basic_a_u6.json"
+  },
+  {
+    "id": "basic_a_u7",
+    "title": "Basic A · Unit 7 · I can",
+    "book": "basic_a",
+    "unit": 7,
+    "pack_url": "https://mrjkorea.github.io/day2-words/packs/basic_a_u7.json"
+  },
+  {
+    "id": "basic_a_u8",
+    "title": "Basic A · Unit 8 · Numbers 11–100",
+    "book": "basic_a",
+    "unit": 8,
+    "pack_url": "https://mrjkorea.github.io/day2-words/packs/basic_a_u8.json"
+  },
+  {
+    "id": "basic_b_u1",
+    "title": "Basic B · Unit 1 · How are you?",
+    "book": "basic_b",
+    "unit": 1,
+    "pack_url": "https://mrjkorea.github.io/day2-words/packs/basic_b_u1.json"
+  },
+  {
+    "id": "basic_b_u2",
+    "title": "Basic B · Unit 2 · I like Mr. Jay",
+    "book": "basic_b",
+    "unit": 2,
+    "pack_url": "https://mrjkorea.github.io/day2-words/packs/basic_b_u2.json"
+  },
+  {
+    "id": "basic_b_u3",
+    "title": "Basic B · Unit 3 · Classroom English Two",
+    "book": "basic_b",
+    "unit": 3,
+    "pack_url": "https://mrjkorea.github.io/day2-words/packs/basic_b_u3.json"
+  },
+  {
+    "id": "basic_b_u4",
+    "title": "Basic B · Unit 4 · Rock Paper Scissors",
+    "book": "basic_b",
+    "unit": 4,
+    "pack_url": "https://mrjkorea.github.io/day2-words/packs/basic_b_u4.json"
+  },
+  {
+    "id": "basic_b_u5",
+    "title": "Basic B · Unit 5 · What is it?",
+    "book": "basic_b",
+    "unit": 5,
+    "pack_url": "https://mrjkorea.github.io/day2-words/packs/basic_b_u5.json"
+  },
+  {
+    "id": "basic_b_u6",
+    "title": "Basic B · Unit 6 · I like my body",
+    "book": "basic_b",
+    "unit": 6,
+    "pack_url": "https://mrjkorea.github.io/day2-words/packs/basic_b_u6.json"
+  },
+  {
+    "id": "basic_b_u7",
+    "title": "Basic B · Unit 7 · What Color is That?",
+    "book": "basic_b",
+    "unit": 7,
+    "pack_url": "https://mrjkorea.github.io/day2-words/packs/basic_b_u7.json"
+  },
+  {
+    "id": "basic_b_u8",
+    "title": "Basic B · Unit 8 · How old are you?",
+    "book": "basic_b",
+    "unit": 8,
+    "pack_url": "https://mrjkorea.github.io/day2-words/packs/basic_b_u8.json"
+  },
+  {
+    "id": "basic_c_u1",
+    "title": "Basic C · Unit 1 · I Love My Dog Zoey",
+    "book": "basic_c",
+    "unit": 1,
+    "pack_url": "https://mrjkorea.github.io/day2-words/packs/basic_c_u1.json"
+  },
+  {
+    "id": "basic_c_u2",
+    "title": "Basic C · Unit 2 · Look at My New Hat",
+    "book": "basic_c",
+    "unit": 2,
+    "pack_url": "https://mrjkorea.github.io/day2-words/packs/basic_c_u2.json"
+  },
+  {
+    "id": "basic_c_u3",
+    "title": "Basic C · Unit 3 · Classroom English Three",
+    "book": "basic_c",
+    "unit": 3,
+    "pack_url": "https://mrjkorea.github.io/day2-words/packs/basic_c_u3.json"
+  },
+  {
+    "id": "basic_c_u4",
+    "title": "Basic C · Unit 4 · What Can We See near Tongyeong?",
+    "book": "basic_c",
+    "unit": 4,
+    "pack_url": "https://mrjkorea.github.io/day2-words/packs/basic_c_u4.json"
+  },
+  {
+    "id": "basic_c_u5",
+    "title": "Basic C · Unit 5 · Spelling Bee",
+    "book": "basic_c",
+    "unit": 5,
+    "pack_url": "https://mrjkorea.github.io/day2-words/packs/basic_c_u5.json"
+  },
+  {
+    "id": "basic_c_u6",
+    "title": "Basic C · Unit 6 · Don't Touch Your Arm",
+    "book": "basic_c",
+    "unit": 6,
+    "pack_url": "https://mrjkorea.github.io/day2-words/packs/basic_c_u6.json"
+  },
+  {
+    "id": "basic_c_u7",
+    "title": "Basic C · Unit 7 · Come Play With Us",
+    "book": "basic_c",
+    "unit": 7,
+    "pack_url": "https://mrjkorea.github.io/day2-words/packs/basic_c_u7.json"
+  },
+  {
+    "id": "basic_c_u8",
+    "title": "Basic C · Unit 8 · I Want a New Computer",
+    "book": "basic_c",
+    "unit": 8,
+    "pack_url": "https://mrjkorea.github.io/day2-words/packs/basic_c_u8.json"
+  },
+  {
+    "id": "int2a_u1",
+    "title": "INT 2A · Unit 1 · How is the Weather?",
+    "book": "int2a",
+    "unit": 1,
+    "pack_url": "https://mrjkorea.github.io/day2-words/packs/int2a_u1.json"
+  },
+  {
+    "id": "int2a_u2",
+    "title": "INT 2A · Unit 2 · There are Snakes!",
+    "book": "int2a",
+    "unit": 2,
+    "pack_url": "https://mrjkorea.github.io/day2-words/packs/int2a_u2.json"
+  },
+  {
+    "id": "int2a_u3",
+    "title": "INT 2A · Unit 3 · Can You Speak Chinese?",
+    "book": "int2a",
+    "unit": 3,
+    "pack_url": "https://mrjkorea.github.io/day2-words/packs/int2a_u3.json"
+  },
+  {
+    "id": "int2a_u4",
+    "title": "INT 2A · Unit 4 · What do you Want?",
+    "book": "int2a",
+    "unit": 4,
+    "pack_url": "https://mrjkorea.github.io/day2-words/packs/int2a_u4.json"
+  },
+  {
+    "id": "int2a_u5",
+    "title": "INT 2A · Unit 5 · Where is My Phone?",
+    "book": "int2a",
+    "unit": 5,
+    "pack_url": "https://mrjkorea.github.io/day2-words/packs/int2a_u5.json"
+  },
+  {
+    "id": "int2a_u6",
+    "title": "INT 2A · Unit 6 · Look at This Funny Video",
+    "book": "int2a",
+    "unit": 6,
+    "pack_url": "https://mrjkorea.github.io/day2-words/packs/int2a_u6.json"
+  },
+  {
+    "id": "int2a_u7",
+    "title": "INT 2A · Unit 7 · Where is the Teacher?",
+    "book": "int2a",
+    "unit": 7,
+    "pack_url": "https://mrjkorea.github.io/day2-words/packs/int2a_u7.json"
+  },
+  {
+    "id": "int2a_u8",
+    "title": "INT 2A · Unit 8 · What Do You Do After School?",
+    "book": "int2a",
+    "unit": 8,
+    "pack_url": "https://mrjkorea.github.io/day2-words/packs/int2a_u8.json"
+  },
+  {
+    "id": "int2b_u1",
+    "title": "INT 2B · Unit 1 · Hello, This is Pizza Land",
+    "book": "int2b",
+    "unit": 1,
+    "pack_url": "https://mrjkorea.github.io/day2-words/packs/int2b_u1.json"
+  },
+  {
+    "id": "int2b_u2",
+    "title": "INT 2B · Unit 2 · What Time is it Now?",
+    "book": "int2b",
+    "unit": 2,
+    "pack_url": "https://mrjkorea.github.io/day2-words/packs/int2b_u2.json"
+  },
+  {
+    "id": "int2b_u3",
+    "title": "INT 2B · Unit 3 · What Do You Want to be in the Future?",
+    "book": "int2b",
+    "unit": 3,
+    "pack_url": "https://mrjkorea.github.io/day2-words/packs/int2b_u3.json"
+  },
+  {
+    "id": "int2b_u4",
+    "title": "INT 2B · Unit 4 · Welcome to Seven-Eleven",
+    "book": "int2b",
+    "unit": 4,
+    "pack_url": "https://mrjkorea.github.io/day2-words/packs/int2b_u4.json"
+  },
+  {
+    "id": "int2b_u5",
+    "title": "INT 2B · Unit 5 · Somebody Stole My Bike!",
+    "book": "int2b",
+    "unit": 5,
+    "pack_url": "https://mrjkorea.github.io/day2-words/packs/int2b_u5.json"
+  },
+  {
+    "id": "int2b_u6",
+    "title": "INT 2B · Unit 6 · Welcome to Parent's Night",
+    "book": "int2b",
+    "unit": 6,
+    "pack_url": "https://mrjkorea.github.io/day2-words/packs/int2b_u6.json"
+  },
+  {
+    "id": "int2b_u7",
+    "title": "INT 2B · Unit 7 · Have You Seen My Transit Card?",
+    "book": "int2b",
+    "unit": 7,
+    "pack_url": "https://mrjkorea.github.io/day2-words/packs/int2b_u7.json"
+  },
+  {
+    "id": "int2b_u8",
+    "title": "INT 2B · Unit 8 · This is Mine!",
+    "book": "int2b",
+    "unit": 8,
+    "pack_url": "https://mrjkorea.github.io/day2-words/packs/int2b_u8.json"
+  },
+  {
+    "id": "int2c_u1",
+    "title": "INT 2C · Unit 1 · I Love Summer",
+    "book": "int2c",
+    "unit": 1,
+    "pack_url": "https://mrjkorea.github.io/day2-words/packs/int2c_u1.json"
+  },
+  {
+    "id": "int2c_u2",
+    "title": "INT 2C · Unit 2 · What Are You Doing?",
+    "book": "int2c",
+    "unit": 2,
+    "pack_url": "https://mrjkorea.github.io/day2-words/packs/int2c_u2.json"
+  },
+  {
+    "id": "int2c_u3",
+    "title": "INT 2C · Unit 3 · Is This Yours?",
+    "book": "int2c",
+    "unit": 3,
+    "pack_url": "https://mrjkorea.github.io/day2-words/packs/int2c_u3.json"
+  },
+  {
+    "id": "int2c_u4",
+    "title": "INT 2C · Unit 4 · What's Your Favorite?",
+    "book": "int2c",
+    "unit": 4,
+    "pack_url": "https://mrjkorea.github.io/day2-words/packs/int2c_u4.json"
+  },
+  {
+    "id": "int2c_u5",
+    "title": "INT 2C · Unit 5 · How Are You Feeling?",
+    "book": "int2c",
+    "unit": 5,
+    "pack_url": "https://mrjkorea.github.io/day2-words/packs/int2c_u5.json"
+  },
+  {
+    "id": "int2c_u6",
+    "title": "INT 2C · Unit 6 · What's Wrong?",
+    "book": "int2c",
+    "unit": 6,
+    "pack_url": "https://mrjkorea.github.io/day2-words/packs/int2c_u6.json"
+  },
+  {
+    "id": "int2c_u7",
+    "title": "INT 2C · Unit 7 · Phone English 1",
+    "book": "int2c",
+    "unit": 7,
+    "pack_url": "https://mrjkorea.github.io/day2-words/packs/int2c_u7.json"
+  },
+  {
+    "id": "int2c_u8",
+    "title": "INT 2C · Unit 8 · I'll Miss You",
+    "book": "int2c",
+    "unit": 8,
+    "pack_url": "https://mrjkorea.github.io/day2-words/packs/int2c_u8.json"
+  },
+  {
+    "id": "int3a_u1",
+    "title": "INT 3A · Unit 1 · I Can Draw a Monster",
+    "book": "int3a",
+    "unit": 1,
+    "pack_url": "https://mrjkorea.github.io/day2-words/packs/int3a_u1.json"
+  },
+  {
+    "id": "int3a_u2",
+    "title": "INT 3A · Unit 2 · What Flavor Do You Like?",
+    "book": "int3a",
+    "unit": 2,
+    "pack_url": "https://mrjkorea.github.io/day2-words/packs/int3a_u2.json"
+  },
+  {
+    "id": "int3a_u3",
+    "title": "INT 3A · Unit 3 · Opposites",
+    "book": "int3a",
+    "unit": 3,
+    "pack_url": "https://mrjkorea.github.io/day2-words/packs/int3a_u3.json"
+  },
+  {
+    "id": "int3a_u4",
+    "title": "INT 3A · Unit 4 · How Old is He?",
+    "book": "int3a",
+    "unit": 4,
+    "pack_url": "https://mrjkorea.github.io/day2-words/packs/int3a_u4.json"
+  },
+  {
+    "id": "int3a_u5",
+    "title": "INT 3A · Unit 5 · What is This Bug?",
+    "book": "int3a",
+    "unit": 5,
+    "pack_url": "https://mrjkorea.github.io/day2-words/packs/int3a_u5.json"
+  },
+  {
+    "id": "int3a_u6",
+    "title": "INT 3A · Unit 6 · How Will I Yell Your Name?",
+    "book": "int3a",
+    "unit": 6,
+    "pack_url": "https://mrjkorea.github.io/day2-words/packs/int3a_u6.json"
+  },
+  {
+    "id": "int3a_u7",
+    "title": "INT 3A · Unit 7 · Gym Class",
+    "book": "int3a",
+    "unit": 7,
+    "pack_url": "https://mrjkorea.github.io/day2-words/packs/int3a_u7.json"
+  },
+  {
+    "id": "int3a_u8",
+    "title": "INT 3A · Unit 8 · Introduction",
+    "book": "int3a",
+    "unit": 8,
+    "pack_url": "https://mrjkorea.github.io/day2-words/packs/int3a_u8.json"
+  },
+  {
+    "id": "int3b_u1",
+    "title": "INT 3B · Unit 1 · What Grade Are You In?",
+    "book": "int3b",
+    "unit": 1,
+    "pack_url": "https://mrjkorea.github.io/day2-words/packs/int3b_u1.json"
+  },
+  {
+    "id": "int3b_u2",
+    "title": "INT 3B · Unit 2 · Is This a Gayageum?",
+    "book": "int3b",
+    "unit": 2,
+    "pack_url": "https://mrjkorea.github.io/day2-words/packs/int3b_u2.json"
+  },
+  {
+    "id": "int3b_u3",
+    "title": "INT 3B · Unit 3 · Bigger Please!",
+    "book": "int3b",
+    "unit": 3,
+    "pack_url": "https://mrjkorea.github.io/day2-words/packs/int3b_u3.json"
+  },
+  {
+    "id": "int3b_u4",
+    "title": "INT 3B · Unit 4 · Who is This?",
+    "book": "int3b",
+    "unit": 4,
+    "pack_url": "https://mrjkorea.github.io/day2-words/packs/int3b_u4.json"
+  },
+  {
+    "id": "int3b_u5",
+    "title": "INT 3B · Unit 5 · Eat Up",
+    "book": "int3b",
+    "unit": 5,
+    "pack_url": "https://mrjkorea.github.io/day2-words/packs/int3b_u5.json"
+  },
+  {
+    "id": "int3b_u6",
+    "title": "INT 3B · Unit 6 · What Fruit Are These?",
+    "book": "int3b",
+    "unit": 6,
+    "pack_url": "https://mrjkorea.github.io/day2-words/packs/int3b_u6.json"
+  },
+  {
+    "id": "int3b_u7",
+    "title": "INT 3B · Unit 7 · Don't Forget Your Transit Card",
+    "book": "int3b",
+    "unit": 7,
+    "pack_url": "https://mrjkorea.github.io/day2-words/packs/int3b_u7.json"
+  },
+  {
+    "id": "int3b_u8",
+    "title": "INT 3B · Unit 8 · Do You Like Korea?",
+    "book": "int3b",
+    "unit": 8,
+    "pack_url": "https://mrjkorea.github.io/day2-words/packs/int3b_u8.json"
+  },
+  {
+    "id": "int3c_u1",
+    "title": "INT 3C · Unit 1 · Do You Like Sweet Food?",
+    "book": "int3c",
+    "unit": 1,
+    "pack_url": "https://mrjkorea.github.io/day2-words/packs/int3c_u1.json"
+  },
+  {
+    "id": "int3c_u2",
+    "title": "INT 3C · Unit 2 · Do Not Yell",
+    "book": "int3c",
+    "unit": 2,
+    "pack_url": "https://mrjkorea.github.io/day2-words/packs/int3c_u2.json"
+  },
+  {
+    "id": "int3c_u3",
+    "title": "INT 3C · Unit 3 · Can I Play Outside?",
+    "book": "int3c",
+    "unit": 3,
+    "pack_url": "https://mrjkorea.github.io/day2-words/packs/int3c_u3.json"
+  },
+  {
+    "id": "int3c_u4",
+    "title": "INT 3C · Unit 4 · Let's Play an RPG",
+    "book": "int3c",
+    "unit": 4,
+    "pack_url": "https://mrjkorea.github.io/day2-words/packs/int3c_u4.json"
+  },
+  {
+    "id": "int3c_u5",
+    "title": "INT 3C · Unit 5 · What Do You Have?",
+    "book": "int3c",
+    "unit": 5,
+    "pack_url": "https://mrjkorea.github.io/day2-words/packs/int3c_u5.json"
+  },
+  {
+    "id": "int3c_u6",
+    "title": "INT 3C · Unit 6 · How Many Cities?",
+    "book": "int3c",
+    "unit": 6,
+    "pack_url": "https://mrjkorea.github.io/day2-words/packs/int3c_u6.json"
+  },
+  {
+    "id": "int3c_u7",
+    "title": "INT 3C · Unit 7 · Can You Fly?",
+    "book": "int3c",
+    "unit": 7,
+    "pack_url": "https://mrjkorea.github.io/day2-words/packs/int3c_u7.json"
+  },
+  {
+    "id": "int3c_u8",
+    "title": "INT 3C · Unit 8 · What Time is it?",
+    "book": "int3c",
+    "unit": 8,
+    "pack_url": "https://mrjkorea.github.io/day2-words/packs/int3c_u8.json"
+  }
+]

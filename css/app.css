@@ -164,13 +164,90 @@ input[type="password"] {
   font-size: 1.1rem;
 }
 
-.path-list {
+.path-list,
+.path-wind {
   list-style: none;
   padding: 0;
   margin: 0;
   display: flex;
   flex-direction: column;
   gap: 0.65rem;
+}
+
+.path-wind {
+  counter-reset: pathstep;
+  padding-left: 0.25rem;
+  padding-right: 0.25rem;
+}
+
+.path-wind .path-node {
+  counter-increment: pathstep;
+  position: relative;
+  border-left: 4px solid var(--gold);
+}
+
+.path-wind .path-node:nth-child(odd) {
+  margin-right: 1.75rem;
+}
+
+.path-wind .path-node:nth-child(even) {
+  margin-left: 1.75rem;
+}
+
+.path-wind .path-node.later-door {
+  border-left-color: rgba(16, 36, 63, 0.25);
+}
+
+.path-chevron {
+  font-size: 1.35rem;
+  opacity: 0.45;
+  font-weight: 700;
+}
+
+.link-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 0.65rem;
+  margin-top: 0.75rem;
+}
+
+.later-card {
+  text-align: center;
+}
+
+.later-big {
+  font-size: 2rem;
+  font-weight: 800;
+  color: var(--navy);
+  margin: 0.5rem 0;
+}
+
+.field-label {
+  display: block;
+  font-weight: 600;
+  margin: 0.75rem 0 0.35rem;
+  font-size: 0.9rem;
+}
+
+.input {
+  width: 100%;
+  padding: 0.75rem 1rem;
+  border-radius: var(--radius);
+  border: 2px solid rgba(16, 36, 63, 0.15);
+  font-size: 1rem;
+}
+
+.table-wrap {
+  overflow-x: auto;
+  margin-top: 0.75rem;
+}
+
+.pass-hint {
+  font-size: 0.85rem;
+}
+
+.btn-back {
+  margin-bottom: 0.75rem;
 }
 
 .path-item {

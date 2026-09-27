@@ -1,6 +1,4 @@
 const rules = require("../js/rules.js");
-const ba = require("../packs/ba_u01.json");
-const body = require("../packs/body_demo.json");
 
 function assert(cond, msg) {
   if (!cond) {
@@ -12,32 +10,46 @@ function assert(cond, msg) {
 assert(rules.pass(79) === false, "79 should fail");
 assert(rules.pass(80) === true, "80 should pass");
 
-const afterHotspot = { hotspot: 80 };
-assert(rules.nextLocked(afterHotspot) === "choice", "hotspot pass unlocks choice");
-
-const choice70 = { hotspot: 80, choice: 70 };
+const choice70 = { choice: 70 };
 assert(
-  rules.nextLocked(choice70) === "spelling",
+  rules.nextMadeLocked(choice70) === "spelling",
   "70 on choice keeps spelling locked"
 );
 
-const attempts = [
-  { unit_id: "ba_u01", activity_id: "hotspot" },
-  { unit_id: "ba_u01", activity_id: "hotspot" },
-];
-assert(rules.tryNumber(attempts, "ba_u01", "hotspot") === 3, "tryNumber increments");
-
-const packIds = ba.words.map((w) => w.id);
-const bodyIds = body.words.map((w) => w.id);
-const outside = rules.outsidePack(bodyIds, packIds);
-assert(outside.length > 0, "body item outside numbers pack");
+const choice80 = { choice: 80 };
 assert(
-  bodyIds.some((id) => outside.includes(id)),
-  "a body item id is outside the numbers pack"
+  rules.nextMadeLocked(choice80) === "memory",
+  "80 on choice unlocks spelling (memory still locked until spelling passes)"
+);
+assert(
+  rules.nextMadeLocked({ choice: 80, spelling: 80 }) === null,
+  "80 on choice and spelling unlocks all made stations"
 );
 
+assert(
+  rules.nextMadeLocked({}) === "spelling",
+  "missing choice score keeps spelling locked"
+);
+
+assert(
+  rules.nextMadeLocked({ hotspot: 80, order: 80, bell: 80 }) === "spelling",
+  "hotspot / order / bell are not required to unlock choice path"
+);
+
+assert(rules.scorePct(0, 0) === null, "scorePct(0,0) is null");
 assert(rules.scorePct(8, 10) === 80, "scorePct 8/10");
-assert(rules.scorePct(7, 10) === 70, "scorePct 7/10");
+
+assert(rules.roundCounts(2, 10) === false, "roundCounts(2,10) false");
+assert(rules.roundCounts(10, 10) === true, "roundCounts(10,10) true");
+
+const attempts = [
+  { unit_id: "basic_a_u1", station: "choice" },
+  { unit_id: "basic_a_u1", station: "choice" },
+];
+assert(
+  rules.tryNumber(attempts, "basic_a_u1", "choice") === 3,
+  "tryNumber increments"
+);
 
 console.log("GATE_OK");
 process.exit(0);

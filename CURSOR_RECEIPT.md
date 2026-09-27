@@ -1,31 +1,6 @@
-# Cursor receipt — Day 3 workbook
+# Cursor receipt
 
-## Command
-
-```bash
-node scripts/gate_test.js
-```
-
-## Model
-
-composer-2.5 (grok-4.7 stalled with zero files)
-
-## Files written
-
-- index.html
-- css/app.css
-- js/rules.js
-- js/app.js
-- packs/ba_u01.json
-- packs/body_demo.json
-- scripts/gate_test.js (pre-existing, unchanged)
-- README.md
-- CURSOR_RECEIPT.md
-
-## Gate test output
-
-```
-GATE_OK
-```
-
-Exit code: 0
+- **Command:** `cursor-agent -p --force --trust --sandbox disabled --approve-mcps --workspace ~/.hermes/projects/mrj-day3-workbook --model composer-2.5` then `node scripts/gate_test.js`
+- **Model:** composer-2.5
+- **Files written:** `index.html`, `css/app.css`, `js/rules.js`, `js/app.js`, `packs/units.json`, `scripts/gate_test.js`, `README.md`, `CURSOR_RECEIPT.md`
+- **Test:** GATE_OK
