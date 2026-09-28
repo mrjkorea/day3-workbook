@@ -7,8 +7,10 @@
   const SHEET_QUEUE_KEY = "mrj.day3.sheetQueue";
   const SESSION_KEY = "mrj.day3.session";
   const GAMEPACK_KEY = "mrj.wm.gamepack";
+  // Jay 28SEP2026: ONE score book = MRJ Classroom Metrics (id below).
   const SHEET_URL =
     "https://script.google.com/macros/s/AKfycbwIBPzcmJYkJP-uURVzyt8_7iF3mzGBTCp-omNA2sF3Hk5oGusHfOlPyhEnDl2XAJu82w/exec";
+  const MRJ_SCORE_SHEET = "https://docs.google.com/spreadsheets/d/1bpgekxlektvwpsef1PmIkxPiDuHrkVXFaAy-OmwqL5c";
 
   const MAP_STATIONS = [
     { id: "hotspot", label: "Hotspot", kind: "later" },
