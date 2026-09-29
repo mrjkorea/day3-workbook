@@ -52,10 +52,6 @@ body {
   padding-bottom: 2.5rem;
 }
 
-.hidden {
-  display: none !important;
-}
-
 h2 {
   margin: 0 0 0.5rem;
   font-size: 1.35rem;
@@ -220,21 +216,6 @@ input[type="password"] {
   font-weight: 800;
   color: var(--navy);
   margin: 0.5rem 0;
-}
-
-.field-label {
-  display: block;
-  font-weight: 600;
-  margin: 0.75rem 0 0.35rem;
-  font-size: 0.9rem;
-}
-
-.input {
-  width: 100%;
-  padding: 0.75rem 1rem;
-  border-radius: var(--radius);
-  border: 2px solid rgba(16, 36, 63, 0.15);
-  font-size: 1rem;
 }
 
 .table-wrap {

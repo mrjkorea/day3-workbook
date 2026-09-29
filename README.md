@@ -6,7 +6,7 @@ Homemade in-page games were removed. **Later** doors (Hotspot, Hangman, Word sea
 
 ## Login
 
-First name plus 4-digit PIN. Stored only on this device under `localStorage` key `mrj.day3.accounts`. The PIN is never sent in URLs, game links, or the class sheet.
+Shared MRJ sign-in. This page does not ask for a first name or a PIN. The lesson starts only after the `mrj-auth-ready` window event. `event.detail.id` is the student id on the map and the only id on score posts. An empty id does not save a record bucket and does not post a score.
 
 ## Units
 
@@ -24,7 +24,7 @@ Real scores are read from each game’s own saved records when the student retur
 
 ## Records
 
-Attempts are saved under `mrj.day3.records.v1` by student name (no PIN). Use **Records** on any screen.
+Attempts are saved under `mrj.day3.records.v1` by that student id. Use **Records** on any screen.
 
 ## Tests
 

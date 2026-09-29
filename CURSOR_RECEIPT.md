@@ -1,6 +1,11 @@
 # Cursor receipt
 
-- **Command:** `cursor-agent -p --force --trust --sandbox disabled --approve-mcps --workspace ~/.hermes/projects/mrj-day3-workbook --model composer-2.5` then `node scripts/gate_test.js`
-- **Model:** composer-2.5
-- **Files written:** `index.html`, `css/app.css`, `js/rules.js`, `js/app.js`, `packs/units.json`, `scripts/gate_test.js`, `README.md`, `CURSOR_RECEIPT.md`
-- **Test:** GATE_OK
+Wired Day 3 to the shared MRJ sign-in. The local first-name and 4-digit PIN door is gone. The lesson waits for `mrj-auth-ready` and uses `event.detail.id` as the only student id.
+
+## Files changed
+
+- `index.html`
+- `js/app.js`
+- `css/app.css`
+- `README.md`
+- `CURSOR_RECEIPT.md`

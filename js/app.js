@@ -1,11 +1,9 @@
 (function () {
   "use strict";
 
-  const ACCOUNTS_KEY = "mrj.day3.accounts";
   const RECORDS_KEY = "mrj.day3.records.v1";
   const STAMPS_KEY = "mrj.day3.stamps.v1";
   const SHEET_QUEUE_KEY = "mrj.day3.sheetQueue";
-  const SESSION_KEY = "mrj.day3.session";
   const GAMEPACK_KEY = "mrj.wm.gamepack";
   // Jay 28SEP2026: ONE score book = MRJ Classroom Metrics (id below).
   const SHEET_URL =
@@ -35,7 +33,7 @@
     unit: null,
     wordPack: null,
     units: null,
-    view: "login",
+    view: "wait",
     backView: null,
   };
 
@@ -50,16 +48,9 @@
       .replace(/"/g, "&quot;");
   }
 
-  function loadAccounts() {
-    try {
-      return JSON.parse(localStorage.getItem(ACCOUNTS_KEY) || "[]");
-    } catch {
-      return [];
-    }
-  }
-
-  function saveAccounts(list) {
-    localStorage.setItem(ACCOUNTS_KEY, JSON.stringify(list));
+  function studentId() {
+    if (!state.student || state.student.name == null) return "";
+    return String(state.student.name).trim();
   }
 
   function loadRecordsRoot() {
@@ -75,18 +66,22 @@
   }
 
   function studentBucket(name) {
+    const id = String(name == null ? "" : name).trim();
+    if (!id) return { attempts: [], opens: [] };
     const root = loadRecordsRoot();
-    if (!root[name]) {
-      root[name] = { attempts: [], opens: [] };
+    if (!root[id]) {
+      root[id] = { attempts: [], opens: [] };
     }
-    if (!root[name].attempts) root[name].attempts = [];
-    if (!root[name].opens) root[name].opens = [];
-    return root[name];
+    if (!root[id].attempts) root[id].attempts = [];
+    if (!root[id].opens) root[id].opens = [];
+    return root[id];
   }
 
   function persistStudentBucket(name, bucket) {
+    const id = String(name == null ? "" : name).trim();
+    if (!id) return;
     const root = loadRecordsRoot();
-    root[name] = bucket;
+    root[id] = bucket;
     saveRecordsRoot(root);
   }
 
@@ -225,7 +220,10 @@
   }
 
   async function postSheetAttempt(attempt) {
-    const name = attempt.student_name;
+    const name = String(
+      attempt && attempt.student_name != null ? attempt.student_name : ""
+    ).trim();
+    if (!name || name !== studentId()) return "skipped";
     const meta = JSON.stringify({
       student_name: name,
       station: attempt.station,
@@ -282,10 +280,20 @@
   }
 
   async function flushSheetQueue() {
+    const id = studentId();
+    if (!id) return;
     const q = loadSheetQueue();
     if (!q.length) return;
     const remaining = [];
     for (const item of q) {
+      const queuedId =
+        item && item.attempt
+          ? String(item.attempt.student_name || "").trim()
+          : "";
+      if (queuedId !== id) {
+        remaining.push(item);
+        continue;
+      }
       try {
         const res = await fetch(SHEET_URL, {
           method: "POST",
@@ -328,7 +336,8 @@
   }
 
   function recordFinishedAttempt(stamp, correct, total, scorePctVal) {
-    const name = stamp.studentName;
+    const name = studentId();
+    if (!name || String(stamp.studentName || "").trim() !== name) return;
     const bucket = studentBucket(name);
     const tryN = MRJRules.tryNumber(
       bucket.attempts,
@@ -369,7 +378,8 @@
   }
 
   function noteOpenWithoutScore(stamp) {
-    const name = stamp.studentName;
+    const name = studentId();
+    if (!name || String(stamp.studentName || "").trim() !== name) return;
     const bucket = studentBucket(name);
     const key =
       stamp.unitId +
@@ -425,8 +435,8 @@
     ) {
       return;
     }
-    const session = loadSession();
-    if (!session) return;
+    const name = studentId();
+    if (!name) return;
 
     const correct = Number(params.get("score"));
     const total = Number(params.get("max"));
@@ -439,7 +449,7 @@
     const stamps = loadStamps().filter(
       (s) =>
         !(
-          s.studentName === session.name &&
+          s.studentName === name &&
           s.unitId === unitId &&
           s.station === station &&
           s.game === game
@@ -459,7 +469,7 @@
 
     recordFinishedAttempt(
       {
-        studentName: session.name,
+        studentName: name,
         unitId,
         unitTitle,
         station,
@@ -477,10 +487,16 @@
   }
 
   function ingestPendingStamps() {
+    const id = studentId();
+    if (!id) return;
     const stamps = loadStamps();
     if (!stamps.length) return;
     const keep = [];
     stamps.forEach(function (stamp) {
+      if (String(stamp.studentName || "").trim() !== id) {
+        keep.push(stamp);
+        return;
+      }
       if (processStamp(stamp)) return;
       const age = Date.now() - stamp.stampMs;
       if (age > 60000) {
@@ -490,23 +506,6 @@
       }
     });
     saveStamps(keep);
-  }
-
-  function saveSession(name) {
-    sessionStorage.setItem(SESSION_KEY, JSON.stringify({ name: name }));
-  }
-
-  function loadSession() {
-    try {
-      const s = JSON.parse(sessionStorage.getItem(SESSION_KEY) || "null");
-      return s && s.name ? s : null;
-    } catch {
-      return null;
-    }
-  }
-
-  function clearSession() {
-    sessionStorage.removeItem(SESSION_KEY);
   }
 
   async function loadUnitsCatalog() {
@@ -598,8 +597,10 @@
   }
 
   function addStamp(station, game, wordCount) {
+    const name = studentId();
+    if (!name) return;
     const stamp = {
-      studentName: state.student.name,
+      studentName: name,
       unitId: state.unit.id,
       unitTitle: state.unit.title,
       station,
@@ -653,55 +654,6 @@
     if (el) el.addEventListener("click", fn);
   }
 
-  function renderLogin() {
-    state.view = "login";
-    main.innerHTML =
-      '<div class="card">' +
-      "<h2>Log in</h2>" +
-      '<p class="sub">First name and 4-digit PIN stay on this phone only.</p>' +
-      '<div id="login-err" class="err-msg hidden"></div>' +
-      '<label class="field-label">First name</label>' +
-      '<input type="text" id="login-name" autocomplete="given-name" class="input" />' +
-      '<label class="field-label">PIN</label>' +
-      '<input type="password" id="login-pin" inputmode="numeric" maxlength="4" class="input" />' +
-      '<button type="button" id="login-go" class="btn btn-primary">Continue</button>' +
-      "</div>";
-
-    main.querySelector("#login-go").addEventListener("click", tryLogin);
-    main.querySelector("#login-pin").addEventListener("keydown", function (e) {
-      if (e.key === "Enter") tryLogin();
-    });
-  }
-
-  function tryLogin() {
-    const err = main.querySelector("#login-err");
-    const name = main.querySelector("#login-name").value.trim();
-    const pin = main.querySelector("#login-pin").value.trim();
-    err.classList.add("hidden");
-    if (!name || !/^\d{4}$/.test(pin)) {
-      err.textContent = "Enter your first name and a 4-digit PIN.";
-      err.classList.remove("hidden");
-      return;
-    }
-    const accounts = loadAccounts();
-    const found = accounts.find(function (a) {
-      return a.name === name;
-    });
-    if (found) {
-      if (found.pin !== pin) {
-        err.textContent = "Wrong PIN for this name.";
-        err.classList.remove("hidden");
-        return;
-      }
-    } else {
-      accounts.push({ name, pin });
-      saveAccounts(accounts);
-    }
-    state.student = { name };
-    saveSession(name);
-    renderUnits();
-  }
-
   function renderUnits() {
     state.view = "units";
     if (!state.units) {
@@ -733,8 +685,7 @@
       '<p class="sub">One map — words change with the unit.</p>' +
       '<div class="unit-grid">' +
       items +
-      "</div>" +
-      headerBack("Log out");
+      "</div>";
 
     main.querySelectorAll(".unit-btn").forEach(function (btn) {
       btn.addEventListener("click", function () {
@@ -744,11 +695,6 @@
         });
         if (unit) startUnit(unit);
       });
-    });
-    bindBack(".btn-back", function () {
-      state.student = null;
-      clearSession();
-      renderLogin();
     });
   }
 
@@ -965,12 +911,10 @@
   function renderRecords() {
     state.view = "records";
     const prev = state.backView || (state.unit ? "map" : "units");
-    const name = state.student ? state.student.name : null;
+    const name = studentId();
     let body = "";
     if (!name) {
-      body =
-        '<p class="sub">Log in to see your tries on this phone.</p>' +
-        headerBack("Back");
+      body = '<p class="sub">No student ID yet.</p>';
     } else {
       const bucket = studentBucket(name);
       const rows = bucket.attempts
@@ -1018,7 +962,7 @@
         "<h2>Records · " +
         escapeHtml(name) +
         "</h2>" +
-        '<p class="sub">Scores read from games after you return to the map. No PIN stored here.</p>' +
+        '<p class="sub">Scores read from games after you return to the map.</p>' +
         headerBack("Back") +
         '<div class="table-wrap"><table class="records-table">' +
         "<thead><tr><th>Unit</th><th>Station</th><th>Game</th><th>Try</th><th>Score</th><th>Time</th><th>Sheet</th></tr></thead>" +
@@ -1032,23 +976,20 @@
     main.innerHTML = body;
     bindBack(".btn-back", function () {
       if (prev === "map" && state.unit) renderMap();
-      else if (state.student) renderUnits();
-      else renderLogin();
+      else if (studentId()) renderUnits();
     });
   }
 
   btnRecords.addEventListener("click", function () {
     if (state.view === "records") return;
+    if (!studentId()) return;
     state.backView =
-      state.view === "map"
-        ? "map"
-        : state.view === "units" || state.view === "login"
-          ? "units"
-          : "map";
+      state.view === "map" ? "map" : state.view === "units" ? "units" : "map";
     renderRecords();
   });
 
   function onResume() {
+    if (!studentId()) return;
     ingestPendingStamps();
     if (state.view === "map" && state.unit) renderMap();
   }
@@ -1056,22 +997,28 @@
   window.addEventListener("pageshow", onResume);
   window.addEventListener("focus", onResume);
 
-  async function boot() {
+  async function beginLesson() {
+    if (!studentId()) return;
     try {
       await loadUnitsCatalog();
     } catch {
       /* units load again on screen */
     }
+    if (!studentId()) return;
     flushSheetQueue();
-    const session = loadSession();
-    if (session) {
-      state.student = { name: session.name };
-    }
     ingestReturnQuery();
     ingestPendingStamps();
-    if (state.student) renderUnits();
-    else renderLogin();
+    renderUnits();
   }
 
-  boot();
+  window.addEventListener("mrj-auth-ready", function (event) {
+    const raw = event && event.detail ? event.detail.id : "";
+    const id = raw == null ? "" : String(raw).trim();
+    if (!id) {
+      state.student = null;
+      return;
+    }
+    state.student = { name: id };
+    beginLesson();
+  });
 })();
