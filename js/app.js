@@ -1,9 +1,12 @@
 (function () {
   "use strict";
 
-  const RECORDS_KEY = "mrj.day3.records.v1";
-  const STAMPS_KEY = "mrj.day3.stamps.v1";
-  const SHEET_QUEUE_KEY = "mrj.day3.sheetQueue";
+  const PackSync = window.MRJDay3PackSync;
+  const APP_BUILD = "20261007-pack-1";
+  const RECORDS_KEY = PackSync.RECORDS_KEY_BASE;
+  const STAMPS_KEY = PackSync.STAMPS_KEY_BASE;
+  const SHEET_QUEUE_KEY = PackSync.SHEET_QUEUE_KEY_BASE;
+  const PACK_PROGRAM = PackSync.PACK_PROGRAM;
   const GAMEPACK_KEY = "mrj.wm.gamepack";
   // Jay 28SEP2026: ONE score book = MRJ Classroom Metrics (id below).
   const SHEET_URL =
@@ -30,12 +33,18 @@
 
   const state = {
     student: null,
+    idKey: "",
     unit: null,
     wordPack: null,
     units: null,
     view: "wait",
     backView: null,
   };
+
+  const packGate = PackSync.createSaveGate();
+  let packSaveTimer = null;
+  let packLoadRetryTimer = null;
+  let packBootstrapGen = 0;
 
   const main = document.getElementById("main");
   const btnRecords = document.getElementById("btn-records");
@@ -53,21 +62,42 @@
     return String(state.student.name).trim();
   }
 
+  function recordsStorageKey() {
+    return PackSync.keyedStorageKey(RECORDS_KEY, state.idKey);
+  }
+
+  function stampsStorageKey() {
+    return PackSync.keyedStorageKey(STAMPS_KEY, state.idKey);
+  }
+
+  function sheetQueueStorageKey() {
+    return PackSync.keyedStorageKey(SHEET_QUEUE_KEY, state.idKey);
+  }
+
   function loadRecordsRoot() {
+    if (!state.idKey) return {};
     try {
-      return JSON.parse(localStorage.getItem(RECORDS_KEY) || "{}");
+      const raw = JSON.parse(localStorage.getItem(recordsStorageKey()) || "null");
+      if (raw && raw.attempts) {
+        return { [state.student.name]: raw };
+      }
+      return {};
     } catch {
       return {};
     }
   }
 
   function saveRecordsRoot(root) {
-    localStorage.setItem(RECORDS_KEY, JSON.stringify(root));
+    if (!state.idKey) return;
+    const name = studentId();
+    const bucket = root[name] || { attempts: [], opens: [] };
+    localStorage.setItem(recordsStorageKey(), JSON.stringify(bucket));
+    schedulePackSave();
   }
 
   function studentBucket(name) {
     const id = String(name == null ? "" : name).trim();
-    if (!id) return { attempts: [], opens: [] };
+    if (!id || !state.idKey) return { attempts: [], opens: [] };
     const root = loadRecordsRoot();
     if (!root[id]) {
       root[id] = { attempts: [], opens: [] };
@@ -79,10 +109,112 @@
 
   function persistStudentBucket(name, bucket) {
     const id = String(name == null ? "" : name).trim();
-    if (!id) return;
+    if (!id || !state.idKey) return;
     const root = loadRecordsRoot();
     root[id] = bucket;
     saveRecordsRoot(root);
+  }
+
+  function readPackBlobFromStorage() {
+    return PackSync.readLocalPackBlob(localStorage, state.idKey);
+  }
+
+  function writePackBlobToStorage(blob) {
+    PackSync.writeLocalPackBlob(localStorage, state.idKey, blob);
+  }
+
+  function authApi() {
+    return window.MRJ_AUTH || null;
+  }
+
+  function canRemotePackSave() {
+    return PackSync.canRemoteSave(packGate, authApi());
+  }
+
+  function clearPackSaveTimer() {
+    if (packSaveTimer) {
+      clearTimeout(packSaveTimer);
+      packSaveTimer = null;
+    }
+  }
+
+  function flushPackSave() {
+    clearPackSaveTimer();
+    if (!canRemotePackSave() || !state.idKey) return;
+    const auth = authApi();
+    if (!auth) return;
+    const blob = readPackBlobFromStorage();
+    auth.savePack(PACK_PROGRAM, PackSync.serializePackBlob(blob));
+  }
+
+  function schedulePackSave() {
+    if (!canRemotePackSave() || !state.idKey) return;
+    clearPackSaveTimer();
+    packSaveTimer = setTimeout(flushPackSave, PackSync.SAVE_THROTTLE_MS);
+  }
+
+  function schedulePackLoadRetry() {
+    if (packLoadRetryTimer) return;
+    packLoadRetryTimer = setTimeout(function () {
+      packLoadRetryTimer = null;
+      if (state.idKey) bootstrapPackSync();
+    }, 30000);
+  }
+
+  async function bootstrapPackSync() {
+    const gen = ++packBootstrapGen;
+    const studentKey = state.idKey;
+    if (!studentKey) return;
+
+    packGate.loadFinished = false;
+    packGate.loadOk = false;
+    packGate.program = PACK_PROGRAM;
+
+    const auth = authApi();
+    const localBefore = readPackBlobFromStorage();
+
+    if (!auth || typeof auth.loadPack !== "function") {
+      packGate.loadFinished = true;
+      packGate.loadOk = true;
+      return;
+    }
+
+    let result;
+    try {
+      result = await auth.loadPack(PACK_PROGRAM);
+    } catch {
+      result = { ok: false, error: "network" };
+    }
+
+    if (gen !== packBootstrapGen || state.idKey !== studentKey) return;
+
+    if (!result || !result.ok) {
+      packGate.loadFinished = false;
+      packGate.loadOk = false;
+      schedulePackLoadRetry();
+      return;
+    }
+
+    packGate.loadFinished = true;
+    packGate.loadOk = true;
+
+    const serverBlob = PackSync.parsePackJson(
+      result.progress_json != null ? result.progress_json : ""
+    );
+    const merged = PackSync.mergePackBlob(localBefore, serverBlob);
+    writePackBlobToStorage(merged);
+
+    if (
+      typeof auth.savePack === "function" &&
+      PackSync.canRemoteSave(packGate, auth) &&
+      PackSync.packRicherThan(merged, serverBlob)
+    ) {
+      try {
+        await auth.savePack(PACK_PROGRAM, PackSync.serializePackBlob(merged));
+      } catch {
+        /* keep local; retry on next throttle */
+      }
+    }
   }
 
   function getAttempts() {
@@ -125,27 +257,33 @@
   }
 
   function loadStamps() {
+    if (!state.idKey) return [];
     try {
-      return JSON.parse(localStorage.getItem(STAMPS_KEY) || "[]");
+      return JSON.parse(localStorage.getItem(stampsStorageKey()) || "[]");
     } catch {
       return [];
     }
   }
 
   function saveStamps(list) {
-    localStorage.setItem(STAMPS_KEY, JSON.stringify(list));
+    if (!state.idKey) return;
+    localStorage.setItem(stampsStorageKey(), JSON.stringify(list));
+    schedulePackSave();
   }
 
   function loadSheetQueue() {
+    if (!state.idKey) return [];
     try {
-      return JSON.parse(localStorage.getItem(SHEET_QUEUE_KEY) || "[]");
+      return JSON.parse(localStorage.getItem(sheetQueueStorageKey()) || "[]");
     } catch {
       return [];
     }
   }
 
   function saveSheetQueue(list) {
-    localStorage.setItem(SHEET_QUEUE_KEY, JSON.stringify(list));
+    if (!state.idKey) return;
+    localStorage.setItem(sheetQueueStorageKey(), JSON.stringify(list));
+    schedulePackSave();
   }
 
   function localDateStr(d) {
@@ -251,7 +389,7 @@
           completed: true,
           local_date: localDateStr(new Date(attempt.ended_at)),
           schema_version: "5.0",
-          tracker_version: "day3-map-1",
+          tracker_version: "day3-map-2-" + APP_BUILD,
           metadata_json: meta,
         },
       ],
@@ -996,6 +1134,7 @@
 
   window.addEventListener("pageshow", onResume);
   window.addEventListener("focus", onResume);
+  window.addEventListener("pagehide", flushPackSave);
 
   async function beginLesson() {
     if (!studentId()) return;
@@ -1016,9 +1155,16 @@
     const id = raw == null ? "" : String(raw).trim();
     if (!id) {
       state.student = null;
+      state.idKey = "";
+      packGate.loadFinished = false;
+      packGate.loadOk = false;
+      clearPackSaveTimer();
       return;
     }
     state.student = { name: id };
-    beginLesson();
+    state.idKey = PackSync.authIdKey(authApi(), id);
+    bootstrapPackSync().then(function () {
+      if (studentId() === id) beginLesson();
+    });
   });
 })();

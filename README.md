@@ -24,7 +24,7 @@ Real scores are read from each game’s own saved records when the student retur
 
 ## Records
 
-Attempts are saved under `mrj.day3.records.v1` by that student id. Use **Records** on any screen.
+Attempts are saved under per-student keys `mrj.day3.records.v1:<id_key>` (and matching stamps / sheet-queue keys). Progress packs sync through MRJ sign-in `loadPack` / `savePack` for program `day3-workbook`. Legacy device-wide `mrj.day3.records.v1` (no suffix) is left on the phone and is not uploaded. Build: **20261007-pack-1** (`version.json`). Use **Records** on any screen.
 
 ## Tests
 
