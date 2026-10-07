@@ -51,5 +51,7 @@ assert(
   "tryNumber increments"
 );
 
+require("./pack_sync_test.js");
+
 console.log("GATE_OK");
 process.exit(0);
