@@ -37,8 +37,12 @@
       v: PACK_BLOB_VERSION,
       records: { attempts: [], opens: [] },
       stamps: [],
-      sheetQueue: [],
     };
+  }
+
+  /** Device-only: metrics POST retry queue — never synced in the server pack. */
+  function emptySheetQueue() {
+    return [];
   }
 
   function normalizeRecords(records) {
@@ -57,8 +61,11 @@
       v: PACK_BLOB_VERSION,
       records: normalizeRecords(raw.records),
       stamps: Array.isArray(raw.stamps) ? raw.stamps : [],
-      sheetQueue: Array.isArray(raw.sheetQueue) ? raw.sheetQueue : [],
     };
+  }
+
+  function remoteSnapshot(blob) {
+    return normalizePackBlob(blob);
   }
 
   function parsePackJson(progressJson) {
@@ -184,23 +191,6 @@
     return Object.values(map);
   }
 
-  function queueKey(item) {
-    if (!item || !item.attempt) return "";
-    const a = item.attempt;
-    return attemptKey(a) + "|" + String(item.queued_at || "");
-  }
-
-  function mergeSheetQueue(localList, remoteList) {
-    const map = {};
-    function add(row) {
-      const key = queueKey(row) || JSON.stringify(row);
-      map[key] = row;
-    }
-    (localList || []).forEach(add);
-    (remoteList || []).forEach(add);
-    return Object.values(map);
-  }
-
   function mergePackBlob(localBlob, remoteBlob) {
     const local = normalizePackBlob(localBlob);
     const remote = normalizePackBlob(remoteBlob);
@@ -211,7 +201,6 @@
         opens: mergeOpens(local.records.opens, remote.records.opens),
       },
       stamps: mergeStamps(local.stamps, remote.stamps),
-      sheetQueue: mergeSheetQueue(local.sheetQueue, remote.sheetQueue),
     };
   }
 
@@ -220,8 +209,7 @@
     return (
       b.records.attempts.length +
       b.records.opens.length +
-      b.stamps.length +
-      b.sheetQueue.length
+      b.stamps.length
     );
   }
 
@@ -230,7 +218,14 @@
   }
 
   function serializePackBlob(blob) {
-    return JSON.stringify(normalizePackBlob(blob));
+    return JSON.stringify(remoteSnapshot(blob));
+  }
+
+  function remotePackDirty(currentBlob, lastSerializedRemote) {
+    return (
+      serializePackBlob(currentBlob) !==
+      String(lastSerializedRemote == null ? "" : lastSerializedRemote)
+    );
   }
 
   function readLocalPackBlob(storage, studentKey) {
@@ -269,11 +264,12 @@
     } catch {
       sheetQueue = [];
     }
-    return normalizePackBlob({
+    const pack = normalizePackBlob({
       records: records,
       stamps: stamps,
-      sheetQueue: sheetQueue,
     });
+    pack.sheetQueue = sheetQueue;
+    return pack;
   }
 
   function writeLocalPackBlob(storage, studentKey, blob) {
@@ -282,10 +278,8 @@
     const b = normalizePackBlob(blob);
     const recordsKey = keyedStorageKey(RECORDS_KEY_BASE, studentKey);
     const stampsKey = keyedStorageKey(STAMPS_KEY_BASE, studentKey);
-    const queueKeyName = keyedStorageKey(SHEET_QUEUE_KEY_BASE, studentKey);
     store.setItem(recordsKey, JSON.stringify(b.records));
     store.setItem(stampsKey, JSON.stringify(b.stamps));
-    store.setItem(queueKeyName, JSON.stringify(b.sheetQueue));
   }
 
   function createSaveGate() {
@@ -330,6 +324,9 @@
     packRicherThan: packRicherThan,
     packWeight: packWeight,
     serializePackBlob: serializePackBlob,
+    remoteSnapshot: remoteSnapshot,
+    remotePackDirty: remotePackDirty,
+    emptySheetQueue: emptySheetQueue,
     readLocalPackBlob: readLocalPackBlob,
     writeLocalPackBlob: writeLocalPackBlob,
     createSaveGate: createSaveGate,

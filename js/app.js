@@ -2,7 +2,7 @@
   "use strict";
 
   const PackSync = window.MRJDay3PackSync;
-  const APP_BUILD = "20261007-pack-1";
+  const APP_BUILD = "20261007-pack-2";
   const RECORDS_KEY = PackSync.RECORDS_KEY_BASE;
   const STAMPS_KEY = PackSync.STAMPS_KEY_BASE;
   const SHEET_QUEUE_KEY = PackSync.SHEET_QUEUE_KEY_BASE;
@@ -45,6 +45,7 @@
   let packSaveTimer = null;
   let packLoadRetryTimer = null;
   let packBootstrapGen = 0;
+  let lastRemotePackSaved = "";
 
   const main = document.getElementById("main");
   const btnRecords = document.getElementById("btn-records");
@@ -138,13 +139,22 @@
     }
   }
 
+  function markRemotePackSaved(serialized) {
+    lastRemotePackSaved =
+      serialized == null ? "" : String(serialized);
+  }
+
   function flushPackSave() {
     clearPackSaveTimer();
     if (!canRemotePackSave() || !state.idKey) return;
     const auth = authApi();
     if (!auth) return;
     const blob = readPackBlobFromStorage();
-    auth.savePack(PACK_PROGRAM, PackSync.serializePackBlob(blob));
+    const payload = PackSync.serializePackBlob(blob);
+    if (!PackSync.remotePackDirty(blob, lastRemotePackSaved)) return;
+    auth.savePack(PACK_PROGRAM, payload).then(function (data) {
+      if (data && data.ok) markRemotePackSaved(payload);
+    });
   }
 
   function schedulePackSave() {
@@ -171,7 +181,6 @@
     packGate.program = PACK_PROGRAM;
 
     const auth = authApi();
-    const localBefore = readPackBlobFromStorage();
 
     if (!auth || typeof auth.loadPack !== "function") {
       packGate.loadFinished = true;
@@ -201,16 +210,20 @@
     const serverBlob = PackSync.parsePackJson(
       result.progress_json != null ? result.progress_json : ""
     );
-    const merged = PackSync.mergePackBlob(localBefore, serverBlob);
+    const localNow = readPackBlobFromStorage();
+    const merged = PackSync.mergePackBlob(localNow, serverBlob);
     writePackBlobToStorage(merged);
+    markRemotePackSaved(PackSync.serializePackBlob(serverBlob));
 
     if (
       typeof auth.savePack === "function" &&
       PackSync.canRemoteSave(packGate, auth) &&
       PackSync.packRicherThan(merged, serverBlob)
     ) {
+      const payload = PackSync.serializePackBlob(merged);
       try {
-        await auth.savePack(PACK_PROGRAM, PackSync.serializePackBlob(merged));
+        const saveResult = await auth.savePack(PACK_PROGRAM, payload);
+        if (saveResult && saveResult.ok) markRemotePackSaved(payload);
       } catch {
         /* keep local; retry on next throttle */
       }
@@ -283,7 +296,6 @@
   function saveSheetQueue(list) {
     if (!state.idKey) return;
     localStorage.setItem(sheetQueueStorageKey(), JSON.stringify(list));
-    schedulePackSave();
   }
 
   function localDateStr(d) {
@@ -1158,6 +1170,7 @@
       state.idKey = "";
       packGate.loadFinished = false;
       packGate.loadOk = false;
+      lastRemotePackSaved = "";
       clearPackSaveTimer();
       return;
     }
