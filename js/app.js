@@ -2,7 +2,8 @@
   "use strict";
 
   const PackSync = window.MRJDay3PackSync;
-  const APP_BUILD = "20261007-pack-2";
+  const ScoreLog = window.MRJDay3ScoreLog;
+  const APP_BUILD = "20261011-savefix";
   const RECORDS_KEY = PackSync.RECORDS_KEY_BASE;
   const STAMPS_KEY = PackSync.STAMPS_KEY_BASE;
   const SHEET_QUEUE_KEY = PackSync.SHEET_QUEUE_KEY_BASE;
@@ -24,12 +25,6 @@
 
   const CHOICE_UNLOCK_GAMES = ["frog", "snow"];
   const SPELLING_UNLOCK_GAMES = ["spellfire"];
-
-  const GAME_RECORD_KEYS = {
-    frog: "mrj-leap-frog-records-v1",
-    snow: "mrj-ski-jump-records-v1",
-    spellfire: "mrj.firefighter_spelling.records",
-  };
 
   const state = {
     student: null,
@@ -306,58 +301,69 @@
     return y + "-" + m + "-" + day;
   }
 
-  function rowTime(row) {
-    const t =
-      row.ts ??
-      row.timestamp ??
-      row.time ??
-      row.created_at ??
-      row.ended_at ??
-      row.started_at;
-    if (typeof t === "number") return t;
-    if (typeof t === "string") {
-      const p = Date.parse(t);
-      return Number.isFinite(p) ? p : 0;
-    }
-    return 0;
-  }
-
-  function loadGameRecords(storageKey) {
+  function loadNoteQueue() {
+    const qKey = ScoreLog.noteQueueStorageKey(state.idKey);
+    if (!qKey) return [];
     try {
-      const raw = JSON.parse(localStorage.getItem(storageKey) || "null");
-      if (Array.isArray(raw)) return raw;
-      if (raw && Array.isArray(raw.records)) return raw.records;
-      if (raw && Array.isArray(raw.items)) return raw.items;
-      return [];
+      return JSON.parse(localStorage.getItem(qKey) || "[]");
     } catch {
       return [];
     }
   }
 
-  function isRowCorrect(row) {
-    if (row.correct === true || row.correct === 1) return true;
-    if (row.correct === false || row.correct === 0) return false;
-    return null;
+  function saveNoteQueue(list) {
+    const qKey = ScoreLog.noteQueueStorageKey(state.idKey);
+    if (!qKey) return;
+    localStorage.setItem(qKey, JSON.stringify(list));
   }
 
-  function newRowsForStamp(storageKey, studentName, sinceMs) {
-    return loadGameRecords(storageKey).filter((row) => {
-      const sid = row.student_id ?? row.student ?? "";
-      if (sid !== studentName) return false;
-      return rowTime(row) > sinceMs;
-    });
+  function enqueueNoteScore(attempt) {
+    const q = loadNoteQueue();
+    q.push({ attempt, queued_at: new Date().toISOString() });
+    saveNoteQueue(q);
   }
 
-  function scoreFromRows(rows) {
-    let correct = 0;
-    let total = 0;
-    rows.forEach((row) => {
-      const c = isRowCorrect(row);
-      if (c === null) return;
-      total += 1;
-      if (c) correct += 1;
-    });
-    return { correct, total };
+  async function sendNoteScore(attempt) {
+    const auth = authApi();
+    if (!auth || typeof auth.noteScore !== "function") return;
+    const name = studentId();
+    if (!name || String(attempt.student_name || "").trim() !== name) return;
+    if (auth.student && String(auth.student() || "").trim() !== name) return;
+    const payload = ScoreLog.buildNoteScorePayload(attempt);
+    try {
+      const result = await auth.noteScore(payload);
+      if (result && result.ok === false) {
+        enqueueNoteScore(attempt);
+      }
+    } catch {
+      enqueueNoteScore(attempt);
+    }
+  }
+
+  async function flushNoteQueue() {
+    const name = studentId();
+    if (!name) return;
+    const auth = authApi();
+    if (!auth || typeof auth.noteScore !== "function") return;
+    const q = loadNoteQueue();
+    if (!q.length) return;
+    const remaining = [];
+    for (const item of q) {
+      const att = item && item.attempt;
+      if (!att || String(att.student_name || "").trim() !== name) {
+        remaining.push(item);
+        continue;
+      }
+      try {
+        const result = await auth.noteScore(ScoreLog.buildNoteScorePayload(att));
+        if (result && result.ok === false) {
+          remaining.push(item);
+        }
+      } catch {
+        remaining.push(item);
+      }
+    }
+    saveNoteQueue(remaining);
   }
 
   function uniqueEventId() {
@@ -374,38 +380,12 @@
       attempt && attempt.student_name != null ? attempt.student_name : ""
     ).trim();
     if (!name || name !== studentId()) return "skipped";
-    const meta = JSON.stringify({
-      student_name: name,
-      station: attempt.station,
-      game: attempt.game,
+    const body = ScoreLog.buildCmBody(attempt, {
+      appBuild: APP_BUILD,
+      auth: authApi(),
+      pass: MRJRules.pass,
+      makeEventId: uniqueEventId,
     });
-    const body = {
-      student_email: "unknown",
-      session_id: "day3-" + name + "-" + localDateStr(new Date(attempt.ended_at)),
-      events: [
-        {
-          event_id: uniqueEventId(),
-          event_kind: "learning_result",
-          source: "mrj-day3",
-          curriculum_program: "conversation",
-          subject: "conversation",
-          app_name: "MRJ Day 3",
-          book_title: attempt.unit_title,
-          unit_id: attempt.unit_id,
-          item_id: attempt.station + "-" + attempt.game,
-          item_type: "game",
-          score_value: attempt.correct,
-          score_max: attempt.total,
-          score_pct: attempt.score_pct,
-          correctness: MRJRules.pass(attempt.score_pct) ? "correct" : "incorrect",
-          completed: true,
-          local_date: localDateStr(new Date(attempt.ended_at)),
-          schema_version: "5.0",
-          tracker_version: "day3-map-2-" + APP_BUILD,
-          metadata_json: meta,
-        },
-      ],
-    };
 
     try {
       const res = await fetch(SHEET_URL, {
@@ -512,6 +492,8 @@
     bucket.attempts.push(attempt);
     persistStudentBucket(name, bucket);
 
+    sendNoteScore(attempt);
+
     postSheetAttempt(attempt).then(function (status) {
       attempt.sheet = status;
       const root = loadRecordsRoot();
@@ -555,17 +537,20 @@
   }
 
   function processStamp(stamp) {
-    const storageKey = GAME_RECORD_KEYS[stamp.game];
-    if (!storageKey) return false;
+    if (!ScoreLog.GAME_RECORD_KEYS[stamp.game]) return false;
 
-    const rows = newRowsForStamp(
-      storageKey,
+    const rows = ScoreLog.newRowsForStamp(
+      function (key) {
+        return localStorage.getItem(key);
+      },
+      stamp.game,
       stamp.studentName,
+      state.idKey || stamp.studentName,
       stamp.stampMs
     );
     if (!MRJRules.roundCounts(rows.length, stamp.wordCount)) return false;
 
-    const { correct, total } = scoreFromRows(rows);
+    const { correct, total } = ScoreLog.scoreFromRows(rows);
     if (!total) return false;
     const pct = MRJRules.scorePct(correct, total);
     if (pct == null) return false;
@@ -1157,6 +1142,7 @@
     }
     if (!studentId()) return;
     flushSheetQueue();
+    flushNoteQueue();
     ingestReturnQuery();
     ingestPendingStamps();
     renderUnits();
@@ -1177,7 +1163,10 @@
     state.student = { name: id };
     state.idKey = PackSync.authIdKey(authApi(), id);
     bootstrapPackSync().then(function () {
-      if (studentId() === id) beginLesson();
+      if (studentId() === id) {
+        flushNoteQueue();
+        beginLesson();
+      }
     });
   });
 })();
