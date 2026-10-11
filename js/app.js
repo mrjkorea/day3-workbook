@@ -3,7 +3,7 @@
 
   const PackSync = window.MRJDay3PackSync;
   const ScoreLog = window.MRJDay3ScoreLog;
-  const APP_BUILD = "20261011-savefix";
+  const APP_BUILD = "20261012-savefix-2";
   const RECORDS_KEY = PackSync.RECORDS_KEY_BASE;
   const STAMPS_KEY = PackSync.STAMPS_KEY_BASE;
   const SHEET_QUEUE_KEY = PackSync.SHEET_QUEUE_KEY_BASE;
@@ -301,69 +301,15 @@
     return y + "-" + m + "-" + day;
   }
 
-  function loadNoteQueue() {
-    const qKey = ScoreLog.noteQueueStorageKey(state.idKey);
-    if (!qKey) return [];
-    try {
-      return JSON.parse(localStorage.getItem(qKey) || "[]");
-    } catch {
-      return [];
-    }
-  }
-
-  function saveNoteQueue(list) {
-    const qKey = ScoreLog.noteQueueStorageKey(state.idKey);
-    if (!qKey) return;
-    localStorage.setItem(qKey, JSON.stringify(list));
-  }
-
-  function enqueueNoteScore(attempt) {
-    const q = loadNoteQueue();
-    q.push({ attempt, queued_at: new Date().toISOString() });
-    saveNoteQueue(q);
-  }
-
-  async function sendNoteScore(attempt) {
+  function sendNoteScore(attempt) {
     const auth = authApi();
-    if (!auth || typeof auth.noteScore !== "function") return;
-    const name = studentId();
-    if (!name || String(attempt.student_name || "").trim() !== name) return;
-    if (auth.student && String(auth.student() || "").trim() !== name) return;
-    const payload = ScoreLog.buildNoteScorePayload(attempt);
-    try {
-      const result = await auth.noteScore(payload);
-      if (result && result.ok === false) {
-        enqueueNoteScore(attempt);
-      }
-    } catch {
-      enqueueNoteScore(attempt);
-    }
-  }
-
-  async function flushNoteQueue() {
-    const name = studentId();
-    if (!name) return;
-    const auth = authApi();
-    if (!auth || typeof auth.noteScore !== "function") return;
-    const q = loadNoteQueue();
-    if (!q.length) return;
-    const remaining = [];
-    for (const item of q) {
-      const att = item && item.attempt;
-      if (!att || String(att.student_name || "").trim() !== name) {
-        remaining.push(item);
-        continue;
-      }
-      try {
-        const result = await auth.noteScore(ScoreLog.buildNoteScorePayload(att));
-        if (result && result.ok === false) {
-          remaining.push(item);
-        }
-      } catch {
-        remaining.push(item);
-      }
-    }
-    saveNoteQueue(remaining);
+    return ScoreLog.invokeNoteScoreOnce(attempt, {
+      auth: auth,
+      currentStudent: studentId(),
+      authStudent: function () {
+        return auth && auth.student ? auth.student() : "";
+      },
+    });
   }
 
   function uniqueEventId() {
@@ -1142,7 +1088,6 @@
     }
     if (!studentId()) return;
     flushSheetQueue();
-    flushNoteQueue();
     ingestReturnQuery();
     ingestPendingStamps();
     renderUnits();
@@ -1163,10 +1108,7 @@
     state.student = { name: id };
     state.idKey = PackSync.authIdKey(authApi(), id);
     bootstrapPackSync().then(function () {
-      if (studentId() === id) {
-        flushNoteQueue();
-        beginLesson();
-      }
+      if (studentId() === id) beginLesson();
     });
   });
 })();
