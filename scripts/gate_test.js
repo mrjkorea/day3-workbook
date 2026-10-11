@@ -52,6 +52,7 @@ assert(
 );
 
 require("./pack_sync_test.js");
+require("../test/score_log_test.js");
 
 console.log("GATE_OK");
 process.exit(0);
