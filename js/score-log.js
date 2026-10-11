@@ -16,8 +16,6 @@
     spellfire: "mrj.firefighter_spelling.records",
   };
 
-  const NOTE_QUEUE_KEY_PREFIX = "day3.noteQueue.";
-
   function idKey(s) {
     return String(s == null ? "" : s)
       .trim()
@@ -117,10 +115,24 @@
     };
   }
 
-  function noteQueueStorageKey(studentKey) {
-    const k = idKey(studentKey);
-    if (!k) return "";
-    return NOTE_QUEUE_KEY_PREFIX + k;
+  async function invokeNoteScoreOnce(attempt, opts) {
+    const auth = opts && opts.auth;
+    const currentStudent =
+      opts && opts.currentStudent != null ? String(opts.currentStudent).trim() : "";
+    if (!auth || typeof auth.noteScore !== "function") return false;
+    const name = String(
+      attempt && attempt.student_name != null ? attempt.student_name : ""
+    ).trim();
+    if (!name || !currentStudent || name !== currentStudent) return false;
+    const signed =
+      opts && typeof opts.authStudent === "function"
+        ? String(opts.authStudent() || "").trim()
+        : auth.student
+          ? String(auth.student() || "").trim()
+          : name;
+    if (signed && signed !== name) return false;
+    await auth.noteScore(buildNoteScorePayload(attempt));
+    return true;
   }
 
   function rowTime(row) {
@@ -203,14 +215,13 @@
 
   return {
     GAME_RECORD_KEYS: GAME_RECORD_KEYS,
-    NOTE_QUEUE_KEY_PREFIX: NOTE_QUEUE_KEY_PREFIX,
     idKey: idKey,
     studentIdKey: studentIdKey,
     localDateStr: localDateStr,
     itemIdFromAttempt: itemIdFromAttempt,
     buildCmBody: buildCmBody,
     buildNoteScorePayload: buildNoteScorePayload,
-    noteQueueStorageKey: noteQueueStorageKey,
+    invokeNoteScoreOnce: invokeNoteScoreOnce,
     recordStorageKeys: recordStorageKeys,
     parseGameRecords: parseGameRecords,
     newRowsForStamp: newRowsForStamp,
