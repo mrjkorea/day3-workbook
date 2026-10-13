@@ -3,7 +3,7 @@
 
   const PackSync = window.MRJDay3PackSync;
   const ScoreLog = window.MRJDay3ScoreLog;
-  const APP_BUILD = "20261012-savefix-2";
+  const APP_BUILD = "20261013-receiver-1";
   const RECORDS_KEY = PackSync.RECORDS_KEY_BASE;
   const STAMPS_KEY = PackSync.STAMPS_KEY_BASE;
   const SHEET_QUEUE_KEY = PackSync.SHEET_QUEUE_KEY_BASE;
@@ -11,7 +11,7 @@
   const GAMEPACK_KEY = "mrj.wm.gamepack";
   // Jay 28SEP2026: ONE score book = MRJ Classroom Metrics (id below).
   const SHEET_URL =
-    "https://script.google.com/macros/s/AKfycbwIBPzcmJYkJP-uURVzyt8_7iF3mzGBTCp-omNA2sF3Hk5oGusHfOlPyhEnDl2XAJu82w/exec";
+    "https://script.google.com/macros/s/AKfycbx677Fg8Q0GpH13Fcrw9aRqsKt7Eo5i29dZRh5goDbTM3KpyYfs6HMJiIMYRx3sjvVG4A/exec";
   const MRJ_SCORE_SHEET = "https://docs.google.com/spreadsheets/d/1bpgekxlektvwpsef1PmIkxPiDuHrkVXFaAy-OmwqL5c";
 
   const MAP_STATIONS = [
