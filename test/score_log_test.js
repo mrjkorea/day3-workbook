@@ -10,7 +10,7 @@ function assert(cond, msg) {
 }
 
 const TEST_STUDENT = "zz_test_mrjmetrics";
-const BUILD = "20261012-savefix-2";
+const BUILD = "20261013-receiver-1";
 const LEGACY_NOTE_QUEUE_KEY = "day3.noteQueue." + TEST_STUDENT;
 
 function mockStorage() {
