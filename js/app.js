@@ -3,7 +3,7 @@
 
   const PackSync = window.MRJDay3PackSync;
   const ScoreLog = window.MRJDay3ScoreLog;
-  const APP_BUILD = "20261013-receiver-1";
+  const APP_BUILD = "20261022-teacher-mode";
   const RECORDS_KEY = PackSync.RECORDS_KEY_BASE;
   const STAMPS_KEY = PackSync.STAMPS_KEY_BASE;
   const SHEET_QUEUE_KEY = PackSync.SHEET_QUEUE_KEY_BASE;
@@ -252,7 +252,18 @@
     return best;
   }
 
+  function mrjTeacherMode() {
+    try {
+      if (window.MRJTeacherUnlock && window.MRJTeacherUnlock.isMrjTeacher()) return true;
+      var api = window.MRJSignin || window.MRJ_AUTH;
+      return !!(api && typeof api.isTeacher === "function" && api.isTeacher());
+    } catch (e) {
+      return false;
+    }
+  }
+
   function madeStationLocked(stationId) {
+    if (mrjTeacherMode()) return false;
     if (!state.unit) return false;
     const lockedId = MRJRules.nextMadeLocked(
       bestByStationForUnit(state.unit.id)
@@ -1092,6 +1103,11 @@
     ingestPendingStamps();
     renderUnits();
   }
+
+  document.addEventListener("mrj-teacher", function () {
+    if (state.view === "map" && state.unit) renderMap();
+    else if (state.view === "units") renderUnits();
+  });
 
   window.addEventListener("mrj-auth-ready", function (event) {
     const raw = event && event.detail ? event.detail.id : "";
